@@ -1,0 +1,33 @@
+FROM ubuntu:22.04
+
+EXPOSE 5900 
+
+ENV HOME /root
+ENV TZ Etc/UTC
+ENV SHELL /bin/bash
+ENV PS1='# '
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PASSWORD="root"
+
+RUN apt-get update -qq
+RUN apt-get upgrade -yqq
+RUN apt install -y supervisor 
+RUN apt install -y tigervnc-standalone-server 
+RUN apt install -y openbox tint2 
+RUN apt install -y pcmanfm xfce4-terminal procps curl telnet iproute2
+
+# TODO: resume me, slim image
+#     apt-get clean
+
+RUN mkdir /root/.vnc
+RUN echo 123456 | vncpasswd -f > /root/.vnc/passwd
+RUN chmod 600 /root/.vnc/passwd
+
+ADD etc/xdg/pcmanfm /root/.config/pcmanfm
+ADD etc /etc
+
+# # original openbox docker ends here
+
+# launch line
+
+CMD ["/usr/bin/supervisord","-c","/etc/supervisord.conf"]

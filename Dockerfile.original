@@ -20,4 +20,10 @@ RUN mkdir /root/.vnc; \
 ADD etc/xdg/pcmanfm /root/.config/pcmanfm
 ADD etc /etc
 
+
+# original openbox docker ends here
+
+
+# android emulator starts
+
 CMD ["/usr/bin/supervisord","-c","/etc/supervisord.conf"]

@@ -1,0 +1,96 @@
+FROM ubuntu:22.04
+
+EXPOSE 5900 
+
+ENV HOME /root
+ENV TZ Etc/UTC
+ENV SHELL /bin/bash
+ENV PS1='# '
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PASSWORD="root"
+
+RUN apt-get update -qq
+RUN apt-get upgrade -yqq
+RUN apt install -y tigervnc-standalone-server 
+RUN apt install -y openbox 
+RUN apt install -y tint2 
+RUN apt install -y pcmanfm 
+RUN apt install -y xfce4-terminal 
+RUN apt install -y supervisor 
+RUN apt install -y procps 
+RUN apt install -y curl 
+RUN apt install -y telnet 
+RUN apt install -y iproute2
+
+# TODO: resume me, slim image
+#     apt-get clean
+
+RUN mkdir /root/.vnc
+RUN echo 123456 | vncpasswd -f > /root/.vnc/passwd
+RUN chmod 600 /root/.vnc/passwd
+
+ADD etc/xdg/pcmanfm /root/.config/pcmanfm
+ADD etc /etc
+
+
+# # original openbox docker ends here
+
+
+# # android emulator starts
+# https://stackoverflow.com/questions/58681718/intstalling-android-studio-on-64-bit-version-of-lubuntu-fails-installing-some-32
+RUN dpkg --add-architecture i386
+RUN apt update
+RUN apt install -y libc6:i386 libncurses5:i386 libstdc++6:i386 lib32z1 libbz2-1.0:i386
+
+RUN apt install -y git wget unzip 
+
+# NOTE: the missing package to make emulator work
+RUN apt install -y qemu-system-x86
+
+# TODO: dummy image, fallback to offical image
+# ARG ANDROID_STUDIO_URL=https://redirector.gvt1.com/edgedl/android/studio/ide-zips/2022.1.1.21/android-studio-2022.1.1.21-linux.tar.gz
+ARG ANDROID_STUDIO_URL=http://192.168.10.61:8181/android_studio.tar.gz
+ARG ANDROID_STUDIO_VERSION=2022.1.1.21
+
+# NOTE: android studio for troubleshooting
+# RUN wget "http://192.168.10.61:8181/android_studio.tar.gz" -O android-studio.tar.gz
+# RUN tar xzvf android-studio.tar.gz
+# RUN mv android-studio /usr/local
+
+# NOTE: /usr/local/android-studio/bin/studio.sh
+
+
+# NOTE: setup emulator
+# ANDROID SDK root
+# pre-request
+RUN apt install -y git openjdk-11-jdk openjdk-17-jdk unzip wget
+
+RUN mkdir -p /root/Android
+# RUN wget -O tools.zip https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip
+RUN cd /root/Android && \
+  wget -O tools.zip http://192.168.10.61:8181/commandlinetools-linux-8512546_latest.zip && \
+  unzip tools.zip && \
+  rm tools.zip
+
+ENV ANDROID_HOME $HOME/Android
+ENV ANDROID_SDK_ROOT $HOME/Android
+ENV ANDROID_USER_HOME $HOME/.android
+
+ENV PATH $PATH:$ANDROID_HOME/tools
+ENV PATH $PATH:$ANDROID_HOME/tools/bin
+ENV PATH $PATH:$ANDROID_HOME/platform-tools
+ENV PATH $PATH:$ANDROID_HOME/cmdline-tools/bin
+
+RUN yes | sdkmanager --verbose --sdk_root=$ANDROID_HOME --licenses
+RUN echo y | sdkmanager --verbose --sdk_root=$ANDROID_HOME "platform-tools" "emulator"
+RUN echo y | sdkmanager --verbose --sdk_root=$ANDROID_HOME "system-images;android-25;default;x86"
+
+# manaually create this directory but i don't know why, documetated
+RUN mkdir $ANDROID_HOME/platforms
+
+# create AVD
+RUN echo no | avdmanager -v create avd -f -n test_nexus -k 'system-images;android-25;default;x86' 
+
+# TODO: resume this
+
+CMD ["/usr/bin/supervisord","-c","/etc/supervisord.conf"]
