@@ -3,8 +3,9 @@ FROM openbox-android
 # NOTE: setup emulator
 # ANDROID SDK root
 # pre-request
-RUN apt install -y git openjdk-11-jdk openjdk-17-jdk unzip wget
-RUN apt install -y qemu-system-x86
+RUN apt install -y git  unzip wget \
+  openjdk-11-jdk openjdk-17-jdk \
+  qemu-system-x86
 
 RUN mkdir -p /root/Android
 # RUN wget -O tools.zip https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip
@@ -25,7 +26,6 @@ ENV PATH $PATH:$ANDROID_HOME/cmdline-tools/bin
 RUN yes | sdkmanager --verbose --sdk_root=$ANDROID_HOME --licenses
 RUN echo y | sdkmanager --verbose --sdk_root=$ANDROID_HOME "platform-tools" "emulator"
 RUN echo y | sdkmanager --verbose --sdk_root=$ANDROID_HOME "system-images;android-25;default;x86"
-
 
 # manaually create this directory but i don't know why, documetated
 RUN mkdir -p $ANDROID_HOME/platforms
