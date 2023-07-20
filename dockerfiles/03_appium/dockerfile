@@ -15,3 +15,11 @@ RUN /tmp/nodesource_setup.sh
 RUN apt install -y nodejs
 RUN apt install -y gcc g++ make
 RUN apt install -y yarn
+
+# NOTE: troubleshoot appium-doctor
+# JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+
+RUN npm i --location=global appium appium-doctor
+
+RUN echo y | sdkmanager --verbose --sdk_root=$ANDROID_HOME "tools"
