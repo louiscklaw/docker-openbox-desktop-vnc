@@ -13,9 +13,9 @@ cd dockerfiles/02_android
 cd -
 
 # 03 build appium
-# cd dockerfiles/03_appium
-#   docker build . -t openbox-android
-# cd -
+cd dockerfiles/03_appium
+  docker build . -t openbox-android
+cd -
 
 # finialize docker
 cd dockerfiles
