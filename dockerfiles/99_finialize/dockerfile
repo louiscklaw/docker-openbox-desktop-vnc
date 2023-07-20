@@ -1,0 +1,8 @@
+FROM openbox-android
+
+ADD ./etc/supervisord-appium.conf /etc/supervisord-appium.conf
+
+ADD ./etc/run.sh /etc/run.sh
+RUN chmod +x /etc/run.sh
+
+CMD ["/usr/bin/xfce4-terminal", "-x", "/etc/run.sh"]

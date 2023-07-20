@@ -26,10 +26,13 @@ RUN yes | sdkmanager --verbose --sdk_root=$ANDROID_HOME --licenses
 RUN echo y | sdkmanager --verbose --sdk_root=$ANDROID_HOME "platform-tools" "emulator"
 RUN echo y | sdkmanager --verbose --sdk_root=$ANDROID_HOME "system-images;android-25;default;x86"
 
+
 # manaually create this directory but i don't know why, documetated
-RUN mkdir $ANDROID_HOME/platforms
+RUN mkdir -p $ANDROID_HOME/platforms
 
 # create AVD
 RUN echo no | avdmanager -v create avd -f -n test_nexus -k 'system-images;android-25;default;x86' 
 
-# # original openbox docker ends here
+RUN echo y | sdkmanager --verbose --sdk_root=$ANDROID_HOME "tools"
+
+# emulator setup ends here

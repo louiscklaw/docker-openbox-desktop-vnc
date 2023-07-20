@@ -1,3 +1,0 @@
-FROM openbox-android
-
-CMD ["/usr/bin/supervisord","-c","/etc/supervisord.conf"]

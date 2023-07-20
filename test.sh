@@ -2,6 +2,8 @@
 
 set -ex
 
+docker rmi openbox-android
+
 # 01 build openbox as base
 cd dockerfiles/01_openbox
   docker build . -t openbox-android
@@ -18,7 +20,7 @@ cd dockerfiles/03_appium
 cd -
 
 # finialize docker
-cd dockerfiles
+cd dockerfiles/99_finialize
   docker build . -t openbox-android
 cd -
 
@@ -31,4 +33,5 @@ docker run --rm \
   --device /dev/kvm \
   -v ./share:/share \
   -p 15900:5900 \
+  -p 4723:4723 \
   --name logickee_docker_android openbox-android
